@@ -1,10 +1,13 @@
 package main
 
 import (
+	// "crypto/md5"
 	"crypto/md5"
 	"encoding/json"
 	"fmt"
 	"os"
+
+	// "strconv"
 	"time"
 
 	"github.com/syndtr/goleveldb/leveldb"
@@ -15,12 +18,13 @@ const (
 )
 
 type Block struct {
-	blockNumber       int         `json:"blocknumber"`
-	transactionList   []txn       `json:transactions`
-	status            blockStatus `json:blockstatus`
-	previousBlockHash string      `json:previousblockhash`
-	blockHash         string      `json:blockhash`
+	BlockNumber       int         `json:"blocknumber"`
+	TransactionList   []txn       `json:"transactions"`
+	Status            blockStatus `json:"blockstatus"`
+	PreviousBlockHash string      `json:"previousblockhash"`
+	BlockHash         string      `json:"blockhash"`
 }
+
 
 type blockStatus string
 
@@ -34,11 +38,11 @@ const (
 )
 
 type txn struct {
-	txnID     int
-	timeStamp time.Time
-	valid     bool		`json:"valid"`
-	value     string	`json:"value"`
-	version   string	`json:"version"`
+	TxnID     int
+	TimeStamp time.Time
+	Valid     bool		
+	Value     string	
+	Version   string	
 }
 
 type iBlock interface {
@@ -47,7 +51,7 @@ type iBlock interface {
 }
 
 func isTransactionValid(transaction txn) {
-	if transaction.valid == true {
+	if transaction.Valid == true {
 		block := &Block{}
 		block.pushTransaction(transaction)
 		writeBlockToLedger(*block)
@@ -57,7 +61,7 @@ func isTransactionValid(transaction txn) {
 func (b Block) pushTransaction(transaction txn) {
 	//TODO: This count variable has to be fixed, as it resets everytimr code reruns
 	var count int = 0
-	if transaction.valid == true {
+	if transaction.Valid == true {
 		db, err := leveldb.OpenFile(DB_PATH, nil)
 		if err != nil {
 			fmt.Println("Error. DB can't be created")
@@ -70,7 +74,7 @@ func (b Block) pushTransaction(transaction txn) {
 }
 
 func (b Block) updateBlock(block Block) {
-	block.status = COMMITTED
+	block.Status = COMMITTED
 }
 
 func readDB(key string) {
@@ -84,14 +88,46 @@ func readDB(key string) {
 }
 
 func writeBlockToLedger(block Block) {
-	ledger,err := os.OpenFile("ledger.json",os.O_APPEND|os.O_CREATE,0777)
+	ledger,err := os.OpenFile("ledger.json",os.O_APPEND|os.O_CREATE|os.O_WRONLY,0644)
 	if(err!=nil){
 		fmt.Println("Error creating ledger file")
 	}else{
-		block.blockHash = md5.Sum([]byte("sample"))
+		// var transactionList[] txn
+		// block.blockNumber=1
+		// block.blockHash=fmt.Sprintf("%x",md5.Sum([]byte(block.blockHash)))
+		// block.previousBlockHash=fmt.Sprintf("%x",md5.Sum([]byte(block.previousBlockHash)))
+		// block.status="valid"
+		// block.transactionList = transactionList
+		blockJson,err := json.Marshal(block)
+		fmt.Println(blockJson)
+		if(err!=nil){
+			fmt.Println("Error opening/creating ledger.json file")
+		}else{
+			ledger.WriteString(string(blockJson)+",")
+			fmt.Println("Data written successfully!!")
+								}
+		}
 	}
-}
+
+
 
 func main() {
 // Once errors with all the functions are cleared, you can start implementing the functions here
+	// byteArrayForBlock := []byte{}
+	block := &Block{}
+	block.BlockHash=fmt.Sprintf("%x",md5.Sum([]byte(block.BlockHash)))
+	block.PreviousBlockHash=fmt.Sprintf("%x",md5.Sum([]byte(block.PreviousBlockHash)))
+	block.Status="valid"
+	block.BlockNumber=1
+	// byteArrayForBlock = append(byteArrayForBlock,[]byte(block.blockHash)...)
+	// byteArrayForBlock = append(byteArrayForBlock,[]byte(block.previousBlockHash)...)
+	// byteArrayForBlock = append(byteArrayForBlock,[]byte(strconv.Itoa(block.blockNumber))...)
+	// byteArrayForBlock = append(byteArrayForBlock,[]byte(block.status)...)
+	// hash:=md5.Sum(byteArrayForBlock)
+	// fmt.Printf("%x\n",byteArrayForBlock)
+
+	// fmt.Printf("%x",hash)
+	writeBlockToLedger(*block)
+	fmt.Println(block)
+
 }
