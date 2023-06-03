@@ -67,7 +67,7 @@ func (b Block) pushTransaction(transaction txn) {
 			fmt.Println("Error. DB can't be created")
 		} else {
 			count++
-			db.Put([]byte("key"+string(rune(count))), []byte(transaction.value), nil)
+			db.Put([]byte("key"+string(rune(count))), []byte(transaction.Value), nil)
 		}
 		defer db.Close()
 	}
@@ -92,12 +92,7 @@ func writeBlockToLedger(block Block) {
 	if(err!=nil){
 		fmt.Println("Error creating ledger file")
 	}else{
-		// var transactionList[] txn
-		// block.blockNumber=1
-		// block.blockHash=fmt.Sprintf("%x",md5.Sum([]byte(block.blockHash)))
-		// block.previousBlockHash=fmt.Sprintf("%x",md5.Sum([]byte(block.previousBlockHash)))
-		// block.status="valid"
-		// block.transactionList = transactionList
+		startTime:=time.Now()
 		blockJson,err := json.Marshal(block)
 		fmt.Println(blockJson)
 		if(err!=nil){
@@ -105,7 +100,8 @@ func writeBlockToLedger(block Block) {
 		}else{
 			ledger.WriteString(string(blockJson)+",")
 			fmt.Println("Data written successfully!!")
-								}
+			endTime := time.Since(startTime)
+			fmt.Println("Time taken for block processing is",endTime)					}
 		}
 	}
 
