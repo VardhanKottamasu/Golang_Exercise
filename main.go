@@ -5,6 +5,7 @@ import (
 	"crypto/md5"
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"os"
 
 	// "strconv"
@@ -105,7 +106,29 @@ func writeBlockToLedger(block Block) {
 		}
 	}
 
+	func fetchAllBlocks(){
+		ledger,err:=os.Open("ledger.json")
+		if err!=nil{
+			fmt.Println("Error reading file")
+			return
+		}
+		// defer ledger.Close()
+		blockDetails,err := ioutil.ReadAll(ledger)
+		
+		if(err!=nil){
+			fmt.Println("Error reading file")
+		}
+		var blocks[] Block
+		val:=json.Unmarshal(blockDetails, &blocks)
+			fmt.Println(val)
 
+		for _, block := range blocks {
+			fmt.Println(block.Status)
+			fmt.Println(block.BlockNumber)
+			fmt.Println(block.BlockHash)
+			fmt.Println(block.PreviousBlockHash)
+		}
+	}
 
 func main() {
 // Once errors with all the functions are cleared, you can start implementing the functions here
@@ -123,7 +146,9 @@ func main() {
 	// fmt.Printf("%x\n",byteArrayForBlock)
 
 	// fmt.Printf("%x",hash)
-	writeBlockToLedger(*block)
-	fmt.Println(block)
+	// writeBlockToLedger(*block)
+	// fmt.Println(block)
+	fetchAllBlocks()
+	// fetchBlockByNum(1)
 
 }

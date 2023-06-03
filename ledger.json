@@ -1,7 +1,14 @@
-{
+[{
     "blocknumber":1,
     "transactions":null,
     "blockstatus":"valid",
     "previousblockhash":"d41d8cd98f00b204e9800998ecf8427e",
     "blockhash":"d41d8cd98f00b204e9800998ecf8427e"
-}
+},
+{
+    "blocknumber":2,
+    "transactions":null,
+    "blockstatus":"valid",
+    "previousblockhash":"d41d8cd98f00b204e9800998ecf8427e",
+    "blockhash":"d41d8cd98f00b204e9800998ecf8427e"
+}]
