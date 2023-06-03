@@ -106,6 +106,35 @@ func writeBlockToLedger(block Block) {
 		}
 	}
 
+func fetchBlockByNum(num int){
+		ledger,err:=os.Open("ledger.json")
+		if err!=nil{
+			fmt.Println("Error reading file")
+			return
+		}
+		// defer ledger.Close()
+		blockDetails,err := ioutil.ReadAll(ledger)
+		
+		if(err!=nil){
+			fmt.Println("Error reading file")
+		}
+		var blocks[] Block
+		val:=json.Unmarshal(blockDetails, &blocks)
+			fmt.Println(val)
+
+		for _, block := range blocks {
+			if block.BlockNumber!=num{
+				continue
+			}else{
+			fmt.Println(block.Status)
+			fmt.Println(block.BlockNumber)
+			fmt.Println(block.BlockHash)
+			fmt.Println(block.PreviousBlockHash)
+			}
+		}
+	}
+
+
 	func fetchAllBlocks(){
 		ledger,err:=os.Open("ledger.json")
 		if err!=nil{
@@ -148,7 +177,6 @@ func main() {
 	// fmt.Printf("%x",hash)
 	// writeBlockToLedger(*block)
 	// fmt.Println(block)
-	fetchAllBlocks()
-	// fetchBlockByNum(1)
-
+	// fetchAllBlocks()
+	fetchBlockByNum(1)
 }
